@@ -12,6 +12,16 @@ interface ReadAlongCounterProps {
 export default function ReadAlongCounter({ dayData }: ReadAlongCounterProps) {
   const { dayProgress, recordRead } = useDayProgress(dayData.id);
   const [bumpingIndex, setBumpingIndex] = useState<number | null>(null);
+  const [revealedIndexes, setRevealedIndexes] = useState<Set<number>>(new Set());
+
+  const toggleReveal = useCallback((index: number) => {
+    setRevealedIndexes((prev) => {
+      const next = new Set(prev);
+      if (next.has(index)) next.delete(index);
+      else next.add(index);
+      return next;
+    });
+  }, []);
 
   const sentenceCounts = useMemo(
     () => dayData.conversation.map((_, i) =>
@@ -46,8 +56,15 @@ export default function ReadAlongCounter({ dayData }: ReadAlongCounterProps) {
             }`}>
               {line.speaker}
             </span>
-            <div className="flex-1 min-w-0 pt-0.5">
-              <p className="text-base font-medium text-text leading-relaxed">{line.english}</p>
+            <div
+              className="flex-1 min-w-0 pt-0.5 cursor-pointer select-none"
+              onClick={() => toggleReveal(index)}
+            >
+              <p className={`text-base font-medium text-text leading-relaxed transition-[filter] duration-300 ${
+                revealedIndexes.has(index) ? '' : 'blur-hint'
+              }`}>
+                {line.english}
+              </p>
               <p className="text-sm text-text-secondary mt-0.5">{line.korean}</p>
             </div>
             <button
