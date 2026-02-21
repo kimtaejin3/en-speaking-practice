@@ -39,6 +39,7 @@ type UpdatePayload =
   | { dayId: number; action: 'sentenceAttempt'; mode: 'lineGuessing'; role: 'asA' | 'asB'; sentenceIndex: number; correct: boolean }
   | { dayId: number; action: 'sentenceAttempt'; mode: 'fullConversation'; sentenceIndex: number; correct: boolean }
   | { dayId: number; action: 'readSentence'; sentenceIndex: number }
+  | { dayId: number; action: 'readAllSentences' }
   | { dayId: number; action: 'completeFullConversation' };
 
 export async function POST(request: Request) {
@@ -69,6 +70,12 @@ export async function POST(request: Request) {
   } else if (action === 'readSentence') {
     const s = day.readAlong.sentences[body.sentenceIndex];
     if (s) { s.readCount++; s.lastReadAt = now; }
+    day.readAlong.lastReadAt = now;
+  } else if (action === 'readAllSentences') {
+    for (const s of day.readAlong.sentences) {
+      s.readCount++;
+      s.lastReadAt = now;
+    }
     day.readAlong.lastReadAt = now;
   } else if (action === 'completeFullConversation') {
     day.fullConversation.completionCount++;

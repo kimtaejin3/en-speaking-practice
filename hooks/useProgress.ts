@@ -61,10 +61,15 @@ export function useDayProgress(dayId: number) {
     [dayId, sendUpdate]
   );
 
+  const recordReadAll = useCallback(
+    () => sendUpdate({ dayId, action: 'readAllSentences' }),
+    [dayId, sendUpdate]
+  );
+
   const completeFullConversation = useCallback(
     () => sendUpdate({ dayId, action: 'completeFullConversation' }),
     [dayId, sendUpdate]
   );
 
-  return { dayProgress, loading, recordAttempt, recordRead, completeFullConversation };
+  return { dayProgress, loading, recordAttempt, recordRead, recordReadAll, completeFullConversation };
 }

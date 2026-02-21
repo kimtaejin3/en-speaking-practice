@@ -10,9 +10,13 @@ interface ReadAlongCounterProps {
 }
 
 export default function ReadAlongCounter({ dayData }: ReadAlongCounterProps) {
-  const { dayProgress, recordRead } = useDayProgress(dayData.id);
+  const { dayProgress, recordRead, recordReadAll } = useDayProgress(dayData.id);
   const [bumpingIndex, setBumpingIndex] = useState<number | null>(null);
   const [revealedIndexes, setRevealedIndexes] = useState<Set<number>>(new Set());
+  // pending counts: incremented immediately, decremented when server responds
+  const [pendingCounts, setPendingCounts] = useState<number[]>(() =>
+    dayData.conversation.map(() => 0)
+  );
 
   const toggleReveal = useCallback((index: number) => {
     setRevealedIndexes((prev) => {
@@ -25,24 +29,44 @@ export default function ReadAlongCounter({ dayData }: ReadAlongCounterProps) {
 
   const sentenceCounts = useMemo(
     () => dayData.conversation.map((_, i) =>
-      dayProgress?.readAlong.sentences[i]?.readCount ?? 0
+      (dayProgress?.readAlong.sentences[i]?.readCount ?? 0) + pendingCounts[i]
     ),
-    [dayData.conversation, dayProgress]
+    [dayData.conversation, dayProgress, pendingCounts]
   );
 
   const totalCount = sentenceCounts.reduce((sum, c) => sum + c, 0);
 
   const handleReadLine = useCallback((index: number) => {
-    recordRead(index);
+    // Optimistic: increment pending immediately
+    setPendingCounts((prev) => {
+      const next = [...prev];
+      next[index]++;
+      return next;
+    });
     setBumpingIndex(index);
     setTimeout(() => setBumpingIndex(null), 300);
+
+    // Fire request, decrement pending when server confirms
+    recordRead(index).then(() => {
+      setPendingCounts((prev) => {
+        const next = [...prev];
+        next[index]--;
+        return next;
+      });
+    });
   }, [recordRead]);
 
   const handleReadAll = useCallback(() => {
-    dayData.conversation.forEach((_, i) => recordRead(i));
+    // Optimistic: increment all pending immediately
+    setPendingCounts((prev) => prev.map((c) => c + 1));
     setBumpingIndex(-1);
     setTimeout(() => setBumpingIndex(null), 300);
-  }, [dayData.conversation, recordRead]);
+
+    // Single batch request, decrement all pending when confirmed
+    recordReadAll().then(() => {
+      setPendingCounts((prev) => prev.map((c) => c - 1));
+    });
+  }, [recordReadAll]);
 
   return (
     <div>
