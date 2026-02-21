@@ -11,48 +11,31 @@ interface ReadAlongCounterProps {
 
 export default function ReadAlongCounter({ dayData }: ReadAlongCounterProps) {
   const { dayProgress, recordRead } = useDayProgress(dayData.id);
-  const [localCounts, setLocalCounts] = useState<number[]>(() =>
-    dayData.conversation.map(() => 0)
-  );
   const [bumpingIndex, setBumpingIndex] = useState<number | null>(null);
 
   const sentenceCounts = useMemo(
-    () => dayData.conversation.map((_, i) => {
-      const serverCount = dayProgress?.readAlong.sentences[i]?.readCount ?? 0;
-      return serverCount + localCounts[i];
-    }),
-    [dayData.conversation, dayProgress, localCounts]
+    () => dayData.conversation.map((_, i) =>
+      dayProgress?.readAlong.sentences[i]?.readCount ?? 0
+    ),
+    [dayData.conversation, dayProgress]
   );
 
   const totalCount = sentenceCounts.reduce((sum, c) => sum + c, 0);
 
   const handleReadLine = useCallback((index: number) => {
-    setLocalCounts((prev) => {
-      const next = [...prev];
-      next[index]++;
-      return next;
-    });
+    recordRead(index);
     setBumpingIndex(index);
     setTimeout(() => setBumpingIndex(null), 300);
-    recordRead(index);
   }, [recordRead]);
 
   const handleReadAll = useCallback(() => {
-    dayData.conversation.forEach((_, i) => {
-      setLocalCounts((prev) => {
-        const next = [...prev];
-        next[i]++;
-        return next;
-      });
-      recordRead(i);
-    });
-    setBumpingIndex(-1); // -1 = total bump
+    dayData.conversation.forEach((_, i) => recordRead(i));
+    setBumpingIndex(-1);
     setTimeout(() => setBumpingIndex(null), 300);
   }, [dayData.conversation, recordRead]);
 
   return (
     <div>
-      {/* Per-sentence list */}
       <div className="divide-y divide-border">
         {dayData.conversation.map((line, index) => (
           <div key={index} className="flex items-start gap-3 py-3">
@@ -82,7 +65,6 @@ export default function ReadAlongCounter({ dayData }: ReadAlongCounterProps) {
         ))}
       </div>
 
-      {/* Total + Read All button */}
       <div className="mt-8 text-center">
         <p className="text-text-secondary text-sm font-bold mb-2">총 읽기 횟수</p>
         <p className={`text-6xl font-bold text-primary mb-6 ${bumpingIndex === -1 ? 'count-bump' : ''}`}>
