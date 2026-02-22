@@ -2,19 +2,19 @@ import { DayData } from '../types';
 
 const day001: DayData = {
   id: 1,
-  title: '긍정적으로 생각해',
+  title: `Look who's here!`,
   conversation: [
-    { speaker: 'A', english: "I can't believe I failed the test again.", korean: '시험에 또 떨어졌다니 믿을 수가 없어.' },
-    { speaker: 'B', english: 'Look on the bright side. At least you know what to study now.', korean: '긍정적으로 생각해. 최소한 이제 뭘 공부해야 하는지 알잖아.' },
-    { speaker: 'A', english: "I guess you're right. But it's still frustrating.", korean: '네 말이 맞는 것 같아. 그래도 여전히 속상해.' },
-    { speaker: 'B', english: "I understand. But don't give up.", korean: '이해해. 하지만 포기하지 마.' },
-    { speaker: 'A', english: "Thanks. I'll try harder next time.", korean: '고마워. 다음에는 더 열심히 할게.' },
-    { speaker: 'B', english: "That's the spirit! You can do it.", korean: '그래, 그 정신이야! 넌 할 수 있어.' },
+    { speaker: 'A', english: `Ryan! Look who's here!`, korean: `라이언! 이게 대체 누구야?` },
+    { speaker: 'B', english: `Good to see you what a small world.`, korean: `반가워. 세상 참 좁구나.` },
+    { speaker: 'A', english: `Long time no see. How have you been?`, korean: `오랜만이야. 어떻게 지냈어?` },
+    { speaker: 'B', english: `I'm doing great. you haven't changed a bit`, korean: `잘 지내고 있어. 넌 하나도 안 변했구나.` },
+    { speaker: 'A', english: `Nice taliking to you. Say hello to your wife`, korean: `대화 즐거웠어. 와이프한테 안부 전해 줘.` },
+    { speaker: 'B', english: `Catch you later. I'll keep in touch`, korean: `나중에 봐. 내가 연락할게.` },
   ],
   representativeExpression: {
-    english: 'Look on the bright side.',
-    korean: '긍정적으로 생각해.',
-    explanation: '안 좋은 상황에서도 좋은 면을 보라고 격려할 때 사용하는 표현입니다. bright side는 "밝은 면"이라는 뜻으로, 어두운 상황 속에서도 희망적인 부분을 찾아보자는 의미입니다.',
+    english: 'Look who\'s here!',
+    korean: '이게 누구야!',
+    explanation: '친한 사람을 예상치 못한 장소에서 만났을 때 하는 말입니다. 놀라움과 반가움을 동시에 나타내는 표현이죠. 상황에 따라서 What a surprise! 또는 What\'re you doing here?와 같은 표현이 \'여긴 웬일이야?\'라는 의미로 사용됩니다.',
   },
 };
 
