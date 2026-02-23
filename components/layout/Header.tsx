@@ -21,8 +21,8 @@ export default function Header({ title, backHref }: HeaderProps) {
   );
 
   return (
-    <header className="sticky top-0 z-10 bg-surface border-b-2 border-border">
-      <div className="flex items-center h-14 px-4">
+    <header className="sticky top-0 z-10 bg-surface border-b-2 border-border w-full">
+      <div className="flex items-center h-14 px-4 max-w-[900px] mx-auto">
         {isHome ? (
           <Link href="/" className="flex items-center gap-2 text-primary">
             <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
