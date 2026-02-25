@@ -3,8 +3,8 @@ import day001 from './day001';
 import day002 from './day002';
 import day003 from './day003';
 import day026 from './day026';
-import day027 from './day026';
-import day028 from './day026';
+import day027 from './day027';
+import day028 from './day028';
 import day037 from './day037';
 import day038 from './day038';
 
