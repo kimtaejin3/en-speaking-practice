@@ -2,13 +2,20 @@ import { DayData } from '../types';
 import day001 from './day001';
 import day002 from './day002';
 import day003 from './day003';
+import day026 from './day026';
+import day027 from './day026';
+import day028 from './day026';
 import day037 from './day037';
 import day038 from './day038';
+
 
 const days: Record<number, DayData> = {
   1: day001,
   2: day002,
   3: day003,
+  26: day026,
+  27: day027,
+  28: day028,
   37: day037,
   38: day038,
 };
