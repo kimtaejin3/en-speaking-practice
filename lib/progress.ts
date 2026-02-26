@@ -45,22 +45,34 @@ export function getSentenceAggregateStats(
   });
 }
 
-export function getDayCompletionLevel(dayProgress: DayProgress | undefined): 'none' | 'partial' | 'complete' {
-  if (!dayProgress) return 'none';
+export function getDayCompletionLevel(dayProgress: DayProgress | undefined): number {
+  if (!dayProgress) return 0;
 
-  const hasLineGuessing =
-    dayProgress.lineGuessing.asA.some((s) => s.correctCount > 0 || s.incorrectCount > 0) ||
-    dayProgress.lineGuessing.asB.some((s) => s.correctCount > 0 || s.incorrectCount > 0);
-  const hasFullConversation =
-    dayProgress.fullConversation.sentences.some((s) => s.correctCount > 0 || s.incorrectCount > 0);
-  const hasReadAlong =
-    dayProgress.readAlong.sentences.some((s) => s.readCount > 0);
+  let totalCount = 0;
 
-  const completedModes = [hasLineGuessing, hasFullConversation, hasReadAlong].filter(Boolean).length;
+  for (const role of ['asA', 'asB'] as const) {
+    for (const s of dayProgress.lineGuessing[role]) {
+      totalCount += s.correctCount + s.incorrectCount;
+    }
+  }
+  for (const s of dayProgress.fullConversation.sentences) {
+    totalCount += s.correctCount + s.incorrectCount;
+  }
+  for (const s of dayProgress.readAlong.sentences) {
+    totalCount += s.readCount;
+  }
 
-  if (completedModes === 3) return 'complete';
-  if (completedModes > 0) return 'partial';
-  return 'none';
+  if (totalCount === 0) return 0;
+  if (totalCount <= 3) return 1;
+  if (totalCount <= 6) return 2;
+  if (totalCount <= 12) return 3;
+  if (totalCount <= 20) return 4;
+  if (totalCount <= 30) return 5;
+  if (totalCount <= 45) return 6;
+  if (totalCount <= 65) return 7;
+  if (totalCount <= 90) return 8;
+  if (totalCount <= 120) return 9;
+  return 10;
 }
 
 export function getOverallStats(progress: AppProgress) {
@@ -74,8 +86,8 @@ export function getOverallStats(progress: AppProgress) {
   for (const dayId of availableDays) {
     const dp = progress.days[dayId];
     const level = getDayCompletionLevel(dp);
-    if (level === 'complete') completedDays++;
-    else if (level === 'partial') partialDays++;
+    if (level === 10) completedDays++;
+    else if (level > 0) partialDays++;
 
     if (dp) {
       // Read count from per-sentence tracking
