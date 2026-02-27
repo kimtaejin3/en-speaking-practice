@@ -8,6 +8,7 @@ import day028 from './day028';
 import day037 from './day037';
 import day038 from './day038';
 import day043 from './day043';
+import day044 from './day044';
 
 
 const days: Record<number, DayData> = {
@@ -20,6 +21,7 @@ const days: Record<number, DayData> = {
   37: day037,
   38: day038,
   43: day043,
+  44: day044,
 };
 
 export function getDayData(dayId: number): DayData | null {
