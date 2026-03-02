@@ -4,8 +4,10 @@ import { useState, useRef, useCallback } from 'react';
 import { ConversationPair } from '@/data/days/index';
 import { checkAnswer } from '@/lib/utils';
 import { BLUR_REVEAL_THRESHOLD } from '@/data/constants';
+import useSpeechRecognition from '@/hooks/useSpeechRecognition';
 import UnderlineInput from '@/components/ui/UnderlineInput';
 import Button from '@/components/ui/Button';
+import MicButton from '@/components/ui/MicButton';
 import SpeakerBadge from './SpeakerBadge';
 
 interface RandomQuizGameProps {
@@ -21,6 +23,19 @@ export default function RandomQuizGame({ questions }: RandomQuizGameProps) {
   const [results, setResults] = useState<number[]>([]); // fail count per question
   const [finished, setFinished] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
+
+  const { isListening, isSupported, startListening, stopListening } =
+    useSpeechRecognition((transcript) => {
+      setAnswer(transcript);
+    });
+
+  const handleMicClick = useCallback(() => {
+    if (isListening) {
+      stopListening();
+    } else {
+      startListening();
+    }
+  }, [isListening, startListening, stopListening]);
 
   const pair = questions[currentIndex];
 
@@ -181,6 +196,11 @@ export default function RandomQuizGame({ questions }: RandomQuizGameProps) {
                       autoFocus
                     />
                   </div>
+                  <MicButton
+                    isListening={isListening}
+                    isSupported={isSupported}
+                    onClick={handleMicClick}
+                  />
                   <Button
                     size="sm"
                     onClick={handleSubmit}

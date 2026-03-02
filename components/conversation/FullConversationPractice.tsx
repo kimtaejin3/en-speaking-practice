@@ -4,9 +4,11 @@ import { useState, useMemo, useRef, useCallback } from 'react';
 import { DayData } from '@/data/types';
 import { checkAnswer } from '@/lib/utils';
 import { useDayProgress } from '@/hooks/useProgress';
+import useSpeechRecognition from '@/hooks/useSpeechRecognition';
 import UnderlineInput from '@/components/ui/UnderlineInput';
 import RevealButton from '@/components/ui/RevealButton';
 import Button from '@/components/ui/Button';
+import MicButton from '@/components/ui/MicButton';
 import SpeakerBadge from './SpeakerBadge';
 
 interface FullConversationPracticeProps {
@@ -22,6 +24,21 @@ export default function FullConversationPractice({ dayData }: FullConversationPr
   );
   const [submittedIndexes, setSubmittedIndexes] = useState<Set<number>>(new Set());
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const activeIndexRef = useRef<number>(0);
+
+  const { isListening, isSupported, startListening, stopListening } =
+    useSpeechRecognition((transcript) => {
+      handleAnswerChange(activeIndexRef.current, transcript);
+    });
+
+  const handleMicClick = useCallback((index: number) => {
+    if (isListening) {
+      stopListening();
+    } else {
+      activeIndexRef.current = index;
+      startListening();
+    }
+  }, [isListening, startListening, stopListening]);
 
   const lineStatuses = useMemo((): LineStatus[] => {
     return dayData.conversation.map((line, i) => {
@@ -103,13 +120,20 @@ export default function FullConversationPractice({ dayData }: FullConversationPr
                     />
                   </div>
                   {!isSubmitted && (
-                    <Button
-                      size="sm"
-                      onClick={() => handleSubmitLine(index)}
-                      disabled={answers[index].trim() === ''}
-                    >
-                      확인
-                    </Button>
+                    <>
+                      <MicButton
+                        isListening={isListening && activeIndexRef.current === index}
+                        isSupported={isSupported}
+                        onClick={() => handleMicClick(index)}
+                      />
+                      <Button
+                        size="sm"
+                        onClick={() => handleSubmitLine(index)}
+                        disabled={answers[index].trim() === ''}
+                      >
+                        확인
+                      </Button>
+                    </>
                   )}
                 </div>
                 {isSubmitted && status === 'incorrect' && (

@@ -5,8 +5,10 @@ import { DayData } from '@/data/types';
 import { checkAnswer } from '@/lib/utils';
 import { BLUR_REVEAL_THRESHOLD } from '@/data/constants';
 import { useDayProgress } from '@/hooks/useProgress';
+import useSpeechRecognition from '@/hooks/useSpeechRecognition';
 import UnderlineInput from '@/components/ui/UnderlineInput';
 import Button from '@/components/ui/Button';
+import MicButton from '@/components/ui/MicButton';
 import SpeakerBadge from './SpeakerBadge';
 
 interface LineGuessingGameProps {
@@ -25,6 +27,21 @@ export default function LineGuessingGame({ dayData, role }: LineGuessingGameProp
   const [completedIndexes, setCompletedIndexes] = useState<Set<number>>(new Set());
   const [shakingIndex, setShakingIndex] = useState<number | null>(null);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const activeIndexRef = useRef<number>(0);
+
+  const { isListening, isSupported, startListening, stopListening } =
+    useSpeechRecognition((transcript) => {
+      handleAnswerChange(activeIndexRef.current, transcript);
+    });
+
+  const handleMicClick = useCallback((index: number) => {
+    if (isListening) {
+      stopListening();
+    } else {
+      activeIndexRef.current = index;
+      startListening();
+    }
+  }, [isListening, startListening, stopListening]);
 
   const myIndexes = useMemo(
     () => dayData.conversation
@@ -142,6 +159,11 @@ export default function LineGuessingGame({ dayData, role }: LineGuessingGameProp
                               placeholder="영어 문장을 입력하세요"
                             />
                           </div>
+                          <MicButton
+                            isListening={isListening && activeIndexRef.current === index}
+                            isSupported={isSupported}
+                            onClick={() => handleMicClick(index)}
+                          />
                           <Button
                             size="sm"
                             onClick={() => handleSubmitLine(index)}

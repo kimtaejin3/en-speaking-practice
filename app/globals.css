@@ -214,3 +214,13 @@ body {
   border-radius: 999px;
   transition: width 0.5s ease;
 }
+
+/* ========== Pulse Recording ========== */
+.pulse-recording {
+  animation: pulseRecording 1.5s ease-in-out infinite;
+}
+
+@keyframes pulseRecording {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
