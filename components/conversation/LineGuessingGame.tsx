@@ -7,6 +7,7 @@ import { BLUR_REVEAL_THRESHOLD } from '@/data/constants';
 import { useDayProgress } from '@/hooks/useProgress';
 import UnderlineInput from '@/components/ui/UnderlineInput';
 import Button from '@/components/ui/Button';
+import SpeakerBadge from './SpeakerBadge';
 
 interface LineGuessingGameProps {
   dayData: DayData;
@@ -106,13 +107,7 @@ export default function LineGuessingGame({ dayData, role }: LineGuessingGameProp
 
           return (
             <div key={index} className="flex gap-3 py-4">
-              <span className={`flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold border-2 ${
-                line.speaker === 'A'
-                  ? 'bg-primary-light text-primary border-primary/30'
-                  : 'bg-accent-blue/10 text-accent-blue border-accent-blue/30'
-              }`}>
-                {line.speaker}
-              </span>
+              <SpeakerBadge speaker={line.speaker} />
               <div className="flex-1 min-w-0 pt-0.5">
                 {isMyLine ? (
                   <div>

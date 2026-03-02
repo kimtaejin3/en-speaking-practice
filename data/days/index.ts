@@ -1,4 +1,4 @@
-import { DayData } from '../types';
+import { ConversationLine, DayData } from '../types';
 import day001 from './day001';
 import day002 from './day002';
 import day003 from './day003';
@@ -32,4 +32,27 @@ export function getDayData(dayId: number): DayData | null {
 
 export function getAvailableDayIds(): number[] {
   return Object.keys(days).map(Number).sort((a, b) => a - b);
+}
+
+export interface ConversationPair {
+  dayId: number;
+  dayTitle: string;
+  question: ConversationLine;
+  answer: ConversationLine;
+}
+
+export function getAllConversationPairs(): ConversationPair[] {
+  const pairs: ConversationPair[] = [];
+  for (const day of Object.values(days)) {
+    const conv = day.conversation;
+    for (let i = 0; i < conv.length - 1; i++) {
+      pairs.push({
+        dayId: day.id,
+        dayTitle: day.title,
+        question: conv[i],
+        answer: conv[i + 1],
+      });
+    }
+  }
+  return pairs;
 }

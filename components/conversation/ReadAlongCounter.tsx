@@ -4,6 +4,7 @@ import { useState, useCallback, useMemo } from 'react';
 import { DayData } from '@/data/types';
 import { useDayProgress } from '@/hooks/useProgress';
 import Button from '@/components/ui/Button';
+import SpeakerBadge from './SpeakerBadge';
 
 interface ReadAlongCounterProps {
   dayData: DayData;
@@ -73,13 +74,7 @@ export default function ReadAlongCounter({ dayData }: ReadAlongCounterProps) {
       <div className="divide-y divide-border">
         {dayData.conversation.map((line, index) => (
           <div key={index} className="flex items-start gap-3 py-3">
-            <span className={`flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold border-2 ${
-              line.speaker === 'A'
-                ? 'bg-primary-light text-primary border-primary/30'
-                : 'bg-accent-blue/10 text-accent-blue border-accent-blue/30'
-            }`}>
-              {line.speaker}
-            </span>
+            <SpeakerBadge speaker={line.speaker} />
             <div
               className="flex-1 min-w-0 pt-0.5 cursor-pointer select-none"
               onClick={() => toggleReveal(index)}
