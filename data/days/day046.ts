@@ -1,7 +1,7 @@
 import { DayData } from '../types';
 
-const day040: DayData = {
-  id: 40,
+const day046: DayData = {
+  id: 46,
   title:`How did it go?`,
   conversation: [
     { speaker: 'A', english: `When was the last time you got a medical checkup?`, korean:`마지막으로 건강검진 한 게 언제죠?` },
@@ -18,4 +18,4 @@ const day040: DayData = {
   },
 };
 
-export default day040;
+export default day046;
